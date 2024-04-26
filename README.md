@@ -55,13 +55,13 @@ john_doe_posts = User.find_by(name: "John Doe").posts
 2. Find all the tags that belong to a post with the title "Post 1".
 
 ```ruby
-publication_1_tags = Post.find_by(title: "Publicación 1").tags
+publication_1_tags = Post.find_by(title: "Post 1").tags
 
 ```
 
 3. Find all users that have a post with the tag "Tag 1".
 
 ```ruby
-users_with_tag_1 = User.joins(posts: :tags).where(tags: { name: "Etiqueta 1" }).distinct
+users_with_tag_1 = User.joins(posts: :tags).where(tags: { name: "Tag 1" }).distinct
 
 ```
