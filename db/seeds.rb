@@ -7,41 +7,52 @@
 #   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
+
+
 require 'faker'
 
-
-# Eliminar todos los registros existentes
-Post.delete_all
+# Limpiar la base de datos antes de poblarla
 User.delete_all
+Post.delete_all
 Tag.delete_all
 
 # Crear usuarios
-5.times do
-  name = Faker::Name.name
-  email = Faker::Internet.email
-  password = Faker::Internet.password(min_length: 6)
-  User.create!(name: name, email: email, password: password)
+5.times do |n|
+  User.create!(
+    name: Faker::Name.unique.name,
+    email: Faker::Internet.unique.email,
+    password: Faker::Internet.password(min_length: 6)
+  )
 end
+
+# Crear usuario "John Doe"
+john_doe = User.create!(name: "John Doe", email: "john.doe@example.com", password: "password")
+
+post1 = Post.create!(
+  title: "Publicación 1",
+  content: "Este es el contenido de la Publicación 1",
+  user_id: john_doe.id, # Asigna el ID del usuario "John Doe" como autor de la publicación
+  answers_count: 0, # Puedes establecer el contador de respuestas a 0 si es necesario
+  likes_count: 0, # Puedes establecer el contador de likes a 0 si es necesario
+  published_at: Time.current, # Establece la fecha y hora de publicación como la actual
+  tags: Tag.all.sample(rand(1..3)) # Asigna un conjunto aleatorio de etiquetas
+)
 
 # Crear etiquetas
-5.times do
-  name = Faker::Lorem.word.capitalize
-  Tag.create!(name: name)
+10.times do
+  Tag.create!(name: Faker::Lorem.unique.word)
 end
 
-# Asignar usuarios y etiquetas a las publicaciones
+# Crear publicaciones asociadas a los usuarios y etiquetas
 User.all.each do |user|
-  2.times do
-    title = Faker::Lorem.sentence
-    content = Faker::Lorem.paragraphs.join("\n")
-    published_at = Faker::Time.between(from: 1.year.ago, to: DateTime.now)
+  rand(1..3).times do
     post = user.posts.create!(
-      title: title,
-      content: content,
-      published_at: published_at
+      title: Faker::Lorem.unique.sentence,
+      content: Faker::Lorem.paragraph,
+      tags: Tag.all.sample(rand(1..3))
     )
-    post.tags << Tag.all.sample(rand(1..3))
   end
 end
 
-  
+
+
